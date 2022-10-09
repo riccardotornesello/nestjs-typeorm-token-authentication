@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { Token } from './entities/token.entity';
+import { RegistrationDto } from './dtos';
 
 @Injectable()
 export class AuthService {
@@ -21,7 +22,7 @@ export class AuthService {
 
   async validateUser(username: string, pass: string): Promise<any> {
     const user = await this.findUser(username);
-    if (user && await bcrypt.compare(pass, user.password)) {
+    if (user && (await bcrypt.compare(pass, user.password))) {
       const { password, ...result } = user;
       return result;
     }
@@ -50,5 +51,13 @@ export class AuthService {
     const key = await this.makeid(64);
     this.tokensRepository.save({ key, user });
     return { access_token: key };
+  }
+
+  async createUser(registrationDto: RegistrationDto) {
+    const user = new User();
+    user.username = registrationDto.username;
+    user.email = registrationDto.email;
+    user.password = await bcrypt.hash(registrationDto.password, 10);
+    return this.usersRepository.save(user);
   }
 }
