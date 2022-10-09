@@ -1,3 +1,4 @@
+import * as bcrypt from 'bcrypt';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -19,8 +20,9 @@ export class AuthService {
   }
 
   async validateUser(username: string, pass: string): Promise<any> {
+    const hash = await bcrypt.hash(pass, 10);
     const user = await this.findUser(username);
-    if (user && user.password === pass) {
+    if (user && user.password === hash) {
       const { password, ...result } = user;
       return result;
     }
