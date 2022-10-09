@@ -1,10 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import { Entity, PrimaryColumn, ManyToOne } from 'typeorm';
 import { User } from './user.entity';
 
 @Entity()
 export class Token {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryColumn()
+  key: string;
 
   @ManyToOne(() => User, (user) => user.tokens)
   user: User;

@@ -1,13 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
+import { User } from './entities/user.entity';
+import { Token } from './entities/token.entity';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+
+    @InjectRepository(Token)
+    private tokensRepository: Repository<Token>,
   ) {}
 
   async findUser(username: string): Promise<User | undefined> {
@@ -21,5 +25,26 @@ export class AuthService {
       return result;
     }
     return null;
+  }
+
+  async findToken(key: string): Promise<Token | undefined> {
+    return this.tokensRepository.findOneBy({ key });
+  }
+
+  async makeid(length) {
+    var result = '';
+    var characters =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for (var i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+  }
+
+  async login(user: User) {
+    const key = await this.makeid(32);
+    this.tokensRepository.save({ key, user });
+    return { access_token: key };
   }
 }
