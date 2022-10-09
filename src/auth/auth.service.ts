@@ -43,7 +43,7 @@ export class AuthService {
   }
 
   async login(user: User) {
-    const key = await this.makeid(32);
+    const key = await this.makeid(64);
     this.tokensRepository.save({ key, user });
     return { access_token: key };
   }
