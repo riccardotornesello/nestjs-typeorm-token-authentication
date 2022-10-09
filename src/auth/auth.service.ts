@@ -28,7 +28,10 @@ export class AuthService {
   }
 
   async findToken(key: string): Promise<Token | undefined> {
-    return this.tokensRepository.findOneBy({ key });
+    return this.tokensRepository.findOne({
+      where: { key },
+      relations: ['user'],
+    });
   }
 
   async makeid(length) {
