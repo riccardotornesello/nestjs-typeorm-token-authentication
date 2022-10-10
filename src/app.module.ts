@@ -15,7 +15,6 @@ import { AuthModule } from './auth/auth.module';
       password: 'root',
       database: 'test',
       autoLoadEntities: true,
-      synchronize: true,
     }),
   ],
   controllers: [AppController],
